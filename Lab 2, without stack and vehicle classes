@@ -1,0 +1,197 @@
+#include "Garage.h"
+
+int main(){
+	string plate1 = "", inOrOut;
+	int numMoved = 0;
+	vehicle carSetup;
+	GarageClass myGarage;
+	ifstream cars;
+
+	cars.open("C:\\Users\\Moshe_000\\Desktop\\cars.txt");
+	if (cars.fail()){
+		cout << "didn't open" << endl;
+		exit(1);
+	}
+
+	while (!cars.eof()){
+		cars >> plate1 >> inOrOut;							//read in plate and character 
+		carSetup.setLicensePlate(plate1);
+		assert(inOrOut.length() == 1);						//if the determining letter, 'a' or 'd', has a length > 1, then abort
+		//it's impossible  to know if the next thing that will be read in is the next license plate or something else, so just abort
+		if (inOrOut == "a" || inOrOut == "A"){				
+			if (myGarage.isValidInput(carSetup)){						//since it's arrivals, if valid input returns true then indicate  
+				cout << "That car is already in the garage" << endl;	//that the car is already in the garage and go to the next line
+				goto invalidInput;
+			}							
+			else if (myGarage.isGarageFull()){		//if the garage is full then output that it's full and go to the next line
+				cout << "The garage is full" << endl;
+				goto invalidInput;
+			}						//if nothing went wrong then pass the car to the stacks and output the number of available spaces
+			myGarage.arrival(carSetup);									
+			cout << plate1 << " has arrived, the garage has " << 20 - myGarage.getCurrentTop(1) - myGarage.getCurrentTop(2) << " open spaces" << endl;
+		}
+		else if (inOrOut == "d" || inOrOut == "D"){
+			if (!myGarage.isValidInput(carSetup)){			//since it's a departure, if valid input returns false, then indicate that the 
+				cout << "That car is not currently in the garage" << endl; //car is not in the garage and go to the next line
+				goto invalidInput;
+			}		//here the program needs to output the number of available spaces as though the car already left (hence + 1)
+					//it needs to happen before actually departing becase the departure function will change the numbers 
+			cout << plate1 << " has departed, the garage has " << 20 - myGarage.getCurrentTop(1) - myGarage.getCurrentTop(2) + 1 << " open spaces. ";
+			myGarage.departure$(carSetup);
+			if (myGarage.sendNumMovementsToMain() == 0) //out put how many times the vehicle was moved
+				cout <<"It was not moved from it's original space" << endl;
+			else
+				cout << "It was moved " << myGarage.sendNumMovementsToMain() << " times to allow other cars to leave" << endl;
+
+		}
+		else
+			cout << "Error in text file, cars must be tagged \nUse 'd' for departure or 'a' for arrival" << endl;
+	invalidInput:
+		void;
+	}
+
+	return 0;
+}
+
+#ifndef GARAGE_H
+#define GARAGE_H
+
+#include "Stack.h"
+
+class GarageClass{
+public:
+	GarageClass();
+	void arrival(const vehicle& arriving);
+	void departure$(const vehicle& departing); //there are two "depart" methods, explained inside
+	void departure(const vehicle& departing, Stack<vehicle> & lane, Stack<vehicle> & otherLane);
+	bool isGarageFull();
+	void laneTopCounter(const int& determinant, const int& whichLane);
+	int getCurrentTop(const int& whichLane) { return laneTop[whichLane - 1]; }; //returns the top of whichever lane is passed
+	bool isValidInput(const vehicle& toCheck);
+	int sendNumMovementsToMain() { return moves; }; //returns a redundant int that is sent in the second departing method
+													//it exists so that movements can be viewed in main
+private:
+	Stack<vehicle> Lane_1, Lane_2, street;
+	int *laneTop;
+	int moves;
+};
+
+GarageClass::GarageClass(){				// gives each lane and the street space for 10 vehicles
+	laneTop = new int[3];				//creates an array of 3 "tops" of lanes, one for each so that the top can be tracked
+	for (int i = 0; i < 3; i++)			//I understand that this would be far simpler (and more readable throughout) if I would just
+		*(laneTop + i) = 0;				//set three variables and adjust them as need but I wanted to do it like this because it is
+}										//more generic and allows for a minor adjustment to enable however many lanes the user wants
+										
+bool GarageClass::isValidInput(const vehicle& toCheck){				 
+	if (Lane_1.searchVehicle(toCheck) == -1 && Lane_2.searchVehicle(toCheck) == -1)
+		return false;				//verifies that the vehicle being queried is in one of the lanes
+	return true;
+}
+
+bool GarageClass::isGarageFull(){
+	if (!Lane_1.IsFull() || !Lane_2.IsFull())
+		return false;
+	return true;
+}
+
+void GarageClass::laneTopCounter(const int& determinant, const int& whichLane){
+	//this function keeps track of the index of the top of the lanes, it is passed a 0 or a 1 to increment or decrement, respectively.
+	// it is also passed a number from 1-3 to act on that lane only, 1 and 2 for the lanes and 3 for the street
+	if (determinant)
+		laneTop[whichLane - 1]++;
+	else
+		laneTop[whichLane - 1]--;
+}
+
+void GarageClass::arrival(const vehicle& arriving){
+	if (!Lane_1.IsFull()){							//pushes cars onto lane 1 until it's full and then onto lane 2 until it's full
+		Lane_1.push(arriving);						//if push is called then the "top" counter increments whichever lane it is sent to
+		laneTopCounter(1, 1);						//this function does not worry about both lanes being full because it cannot be 
+	}												//called from main if the garage is full
+	else if (!Lane_2.IsFull()){
+		Lane_2.push(arriving);
+		laneTopCounter(1, 2);
+	}
+}
+
+void GarageClass::departure$(const vehicle& departing){     //this function checks which lane the car departing is located in 
+	if (Lane_1.searchVehicle(departing) != -1)				//it can then call the generic departure function and pass the lane
+		departure(departing, Lane_1, Lane_2);				//as well as the other lane and the vehicle is passed on along as well
+	else if (Lane_2.searchVehicle(departing) != -1)
+		departure(departing, Lane_2, Lane_1);
+	else
+		throw logic_error("That's impossible");
+}
+
+void GarageClass::departure(const vehicle& departing, Stack<vehicle> & lane, Stack<vehicle> & otherLane){
+	//this function takes in the departing vehicle, the lane it's in and the other lane as references
+
+	int location, laneNum, otherLaneNum;
+	if (Lane_1.searchVehicle(departing) != -1){				//the location within the lane is found
+		location = Lane_1.searchVehicle(departing);			//and the lane is saved as an integer for use later on
+		laneNum = 1;
+	}
+	else if (Lane_2.searchVehicle(departing) != -1){		//same as above except for lane 2
+		location = Lane_2.searchVehicle(departing);
+		laneNum = 2;
+	}
+	else //check if return -1
+		cout << "There's something wrong... see GarageClass.departure(...)" << endl;
+
+	if (laneNum == 1)
+		otherLaneNum = 2;
+	else
+		otherLaneNum = 1;
+
+	int numToBeMoved = laneNum == 1 ? getCurrentTop(1) - Lane_1.searchVehicle(departing) - 1 : getCurrentTop(2) - Lane_2.searchVehicle(departing) - 1;
+	//here the number to be moved is set as an integer and will be used throughout the process of departing
+
+	if (location == 9){				//if the vehicle is in stack[9] then there is no moving from lane<->lane/street so it
+		moves = lane.Top().getNumMovements();//sets the moves variable to that vehicle's numMovements so that it can be 
+		lane.pop();							//passed back to main and then pops the vehicle 
+		laneTopCounter(0, laneNum);			//and then decrements the top of whichever lane it is
+	}
+	else									//if the car is not in the ninth position then...
+	{
+		for (numToBeMoved; numToBeMoved > 0 && !otherLane.IsFull(); numToBeMoved--){ //as long as there are cars to be moved
+			otherLane.push(lane.Top());										//and the other lane isn't full, put the top of 
+			laneTopCounter(1, otherLaneNum);								//that lane into the other lane and increment the 
+			otherLane.Top().addMovement();									//top of the other lane as well as adding a movement 
+
+			lane.pop();														//then pop the vehicle from the original lane
+			laneTopCounter(0, laneNum);										//and decrement the top of it
+		}
+
+		//now that the other lane is full, if anything else is moved
+		//it needs to go on the street
+		//so while numToBeMoved > 0 ....
+		while (numToBeMoved > 0){
+			street.push(lane.Top());			//take the top car and put it on the street
+			laneTopCounter(0, laneNum);			//decrement the top of that lane
+			street.Top().addMovement();			//add a movement to the vehicle that just went on the street
+
+			lane.pop();							//pop the lane 
+			laneTopCounter(1, 3);				//increment the top vehicle on the street
+
+			numToBeMoved--;						//
+		}
+
+		//all cars that were blocking are now in the other lane or on the street, we pop
+		//one more time to remove the car being searched and move the cars back to lane 1
+		//but first moves is set so main can see it
+		moves = lane.Top().getNumMovements();
+		lane.pop();
+		//then we decrement the top of the lane after the final pop
+		laneTopCounter(0, laneNum);
+
+		//now put the cars back in the lane and ensure the street is empty
+		while (!street.IsEmpty()){					//as long as the street isn't empty
+			lane.push(street.Top());				//push the top of the street onto the lane
+			laneTopCounter(1, laneNum);				//increment that lane's top
+			lane.Top().addMovement();				//add a movement to that vehicle
+
+			street.pop();							//pop the vehicle from the street
+			laneTopCounter(0, 3);					//decrement the top of the street
+		}
+	}
+}
