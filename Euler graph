@@ -11,42 +11,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Euler {
-	public static void main(String[] args){
-		/* In the main() the user is prompted to fill in the matrix of their desired 
-		 * size and then the other methods are called to determine if the vertices are
-		 * connected and if so then it finds out if it has an eulerean circuit or path
-		 */
-		Scanner input = new Scanner(System.in);
-		int numRows = 0, numCols = 0;
-		System.out.println("Please enter the dimensions of the matrix:");
-		System.out.println("Number of rows: ");
-		numRows = input.nextInt();
-		System.out.println("Number of columns: ");
-		numCols = input.nextInt();
-		
-		int[][] matrix = new int[numRows][numCols];
-
-		System.out.println("Please fill in the matrix: ");
-		for(int i = 0; i < numRows; i++){
-			for(int j = 0; j < numCols; j++){
-					matrix[i][j] = input.nextInt();
-				
-				if(j != numCols - 1)
-					System.out.println(", ");
-			}
-			System.out.println("");
-		}
-		
-		if(isConnected(matrix))
-			System.out.println(euler(matrix));
-		else
-			System.out.println("This is not a connected graph and cannot have circuits or paths");
-
-		input.close();
-	}
-	
 	public static boolean isConnected(int matrix[][]){
-		
 		//I made this little structure to hold corresponding start/end points
 		//very simple and very efficient for the system I used to determine
 		//if all vertices are connected
@@ -120,6 +85,10 @@ public class Euler {
 	}
 	
 	public static String euler(int [][] matrix){
+	
+		if(!isConnected(matrix))
+			return "This matrix is not connected and cannot have a path or circuit";
+			
 		//this method adds up the number of degrees for each vertex
 		//each vertex with an odd degree is noted, if that amount
 		//passes two then the nested for loop ends. The method
