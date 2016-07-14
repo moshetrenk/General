@@ -1,7 +1,7 @@
 /*
 
-This class takes in an adjacency matrix and returns whether or not the corresponding
-graph has an euler circuit, euler path or neither.
+Input: adjacency matrix as int[][] 
+Output: Whether or not the corresponding graph has an euler circuit, euler path, or neither.
 
 */
 
