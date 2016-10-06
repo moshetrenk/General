@@ -38,7 +38,7 @@
  * worst fit would do 200->400 creating a new partition of 200, the second, third and fourth
  * don't change and the fifth fits into the extra 200 so only 50k wasted and everything assigned
  *
- * sorry for the javadoc comment format... this is c++
+ * sorry for the javadoc comment format... I'm used to java but this had to be c++
  */
 
 #include <iostream>
