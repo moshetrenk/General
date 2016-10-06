@@ -6,8 +6,7 @@
  * summarily fired, maybe executed. This program's inefficiency is a disgrace to 
  * quality programming but this project is not being graded on efficiency and I  
  * am taking 19 credits while also working so my MVP for this project is a functional 
- * program, not efficient code. So please don't judge me on the poor quality of the
- * code that you see here, it is not representative of me.
+ * program, not efficient code. So be aware that the poor code you see here is not representative of me.
  * This program allows the user to enter the number of partitions that an operating
  * system is using and their sizes. Then the process to be executed and their sizes
  * and arrival times. The output is the allocation of each process (if possible) and
