@@ -2,8 +2,6 @@
 #include <cmath>
 using namespace std;
 int main(){
-
-
 	for (int i = 0; i < 6; i++){
 		double m1, m2, t1i, t2i, t1f, t2f, v1i, v2i, v1f, v2f, kei, kef, w;
 		int percentError;
