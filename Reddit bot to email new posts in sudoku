@@ -1,5 +1,5 @@
 """
-This bot checks for new posts in r/sudoku every 20 minutes and emails the link to you    
+This bot checks for new posts in r/sudoku every 2 hours and emails the link to you    
 If you run this yourself, in gmail settings turn on pop/imap
 and turn off blocked access under lesssecureappssecurity
 """
@@ -31,4 +31,4 @@ def main():
             smtpObj.quit()
 while True:
     main()
-    time.sleep(1200000)
+    time.sleep(7200000)
