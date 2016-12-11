@@ -1,0 +1,22 @@
+.mainMenu{
+	list-style-type: none;
+}
+
+.menuLinks{
+	text-decoration:none; 
+	color: #4f5154;	
+}
+
+.circlePic{
+	border-radius: 50%;
+}	
+
+.sides{
+	display: inline-block;
+}
+
+#paragraph{
+	font-family: Josefin Slab; 
+	font-size: 115%; 
+	text-align: left;
+}
