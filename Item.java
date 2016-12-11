@@ -1,3 +1,14 @@
+/* This is pretty cool... you know how on windows when you search the entire system
+for a file, the search can take like a week because nothing is indexed? So if you
+run this, it gives you a csv (excel) file with a complete listing of every file on
+your system so if you find you're doing searches often, you can just run this and 
+get whatever info you need and then navigate to the file you want. Also it shows
+file size, most recent modification, if it's an executable and much more
+
+
+TL;DR Makes a directory of all files (windows)
+
+*/
 package a;
 import java.io.File;
 import java.io.IOException;
