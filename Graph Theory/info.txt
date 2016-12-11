@@ -1,3 +1,5 @@
 Finding cycles/circuits/components in a graph    
-The Depth First Search file is a c++ class that takes a graph (from console input) in the linked list form and performs a depth first     search, it finds the number of connected components and the first cycle in the graph.    
-The Euler circuits file is a java class that takes a graph (no main()- array[][] passed as parameter) in the 2D matrix form and finds if     it has an Eulerean circuit and/or an Eulerean path.
+The Depth First Search file is a c++ class that takes a graph (from console input) in the linked list form and performs a depth first
+search, it finds the number of connected components and the first cycle in the graph.
+The Euler circuits file is a java class that takes a graph (no main()- array[][] passed as parameter) in the 2D matrix form and finds if
+it has an Eulerean circuit and/or an Eulerean path.
