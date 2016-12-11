@@ -1,0 +1,236 @@
+/*********************************************************************************
+This program prompts the user to enter any date until 2599 in the Gregorian calendar
+It will output the day of the week on which that date occured. The program does not
+access a calendar to do this. It doesn't use exception handling or assertion but to
+my knowledge, it will not crash from a user's mistake. If the user did not enter a
+valid date then they will be prompted to try again, no matter what their input was
+**********************************************************************************/
+
+#include <iostream>
+#include <string>
+
+std::string getMonthString(const int& inAdd2);
+std::string getDay(const int& inAdd2);
+int getMonth(const int& month);
+void toAddCalc(const int& year, int &start);
+
+void main()
+{
+	while (1){
+	start:
+		int month, date, year, savedYear, q, r, s, toAdd = 0, start = 0;
+		bool isDateValid = false;
+		std::string inDate;
+		std::string day;
+
+		while (!isDateValid)
+		{
+			std::cout << "Please enter a a date in MM/DD/YYYY format\n";
+			//note: if the user enters 1 instead of 01 for either DD or MM, it will still work
+			getline(std::cin, inDate);
+			/*
+			if the length of the input is either 8 or 9 then check if user entered one digit instead of two
+			ie 1/29/1884 rather than 01/29/1884. If that's the case then format the date to MM/DD/YYYY
+			it would be more difficult to verify that the date is a valid date than it would be to continue
+			with the format that the user entered. The alternative is to prompt the user to re-enter which
+			will happen if after inserting '0' when relevant, the length is still not equal to 10
+			*/
+
+			if (inDate.length() == 8 || inDate.length() == 9){
+				if (inDate[1] == '/'){
+					std::string temp = "          ";
+					for (int i = inDate.length(); i > 0; i--)
+						temp[i] = inDate[i - 1];
+
+					temp[0] = '0';
+					inDate = temp;
+				}
+
+				if (inDate[4] == '/'){
+					std::string temp = "          ";
+					for (int i = inDate.length(); i > 3; i--)
+						temp[i] = inDate[i - 1];
+
+					temp[3] = '0';
+
+					for (int j = 0; j <= 2; j++)
+						temp[j] = inDate[j];
+
+					inDate = temp;
+				}
+			}
+
+			if (inDate.length() != 10)
+			{
+				std::cout << "Invalid entry, please try again\n";
+				std::cout << "You might not have entered the full date\n";
+				goto start;
+			}
+
+			for (int i = 0; i < 10; i++)
+			{
+				//verify that all characters entered are either 1-9 or '/'
+				if ((inDate[i]<'0' && inDate[i] != '/') || (inDate[i]>'9' && inDate[i] != '/')){
+					std::cout << "Invalid entry, please try again\n";
+					std::cout << "You may have entered an invalid character instead of a number\n";
+					goto start;
+				}
+			}
+
+			//once length definitely equals 10, break it into parts 
+			month = std::stoi(inDate.substr(0, 2));
+			date = std::stoi(inDate.substr(3, 2));
+			year = std::stoi(inDate.substr(6, 4));
+
+			if ((inDate.substr(6, 4) < "1583") || (inDate.substr(6, 4) > "2699"))
+			{
+				std::cout << "Sorry, I can only calculate dates of the Gregorian calendar through 2699\n";
+				std::cout << "In October of 1582, the Julian Calendar ended and the Gregorian began\n";
+				std::cout << "Please enter a date between 01/01/1583 and 12/31/2699\n";
+			}
+			else if (inDate.length() == 10 && inDate.substr(6, 4) > "1582" &&  inDate.substr(6, 4) < "2700")
+				isDateValid = true; //isValid starts as false, this needs to happen somewhere
+			if (month < 1 || month > 12)
+			{
+				std::cout << "You entered an invalid number for month, the value must be between 0 and 12\n";
+				isDateValid = false;
+			}
+			else if (month == 2 && date > 28)
+			{
+				//if year % 4 == 0 and year % 100 == 0 && year % 400 != 0, the year is a leap year
+				//if it's not a leap year but the user entered the 29th of February then prompt again
+
+				if (date == 29 && ((year % 400 == 0) || ((year % 4 == 0) && (year % 100 != 0))))
+				{
+
+				}
+				else
+				{
+					std::cout << "There are only 28 days in February of a regular year\n";
+					std::cout << inDate.substr(6, 4) << " is not a leap year, please try again\n";
+					isDateValid = false;
+				}
+			}
+			else if ((month == 4 || month == 6 || month == 9 || month == 11) && date > 30)
+			{
+				std::cout << "There are only 30 days in " << getMonthString(month) << ", the value you entered was too high\n";
+				std::cout << "Please try another date\n";
+				isDateValid = false;
+			}
+			else if (date < 1 || date > 31)
+			{
+				std::cout << "You entered an invalid number for the day, the value must be between 0 and 31\n";
+				isDateValid = false;
+			}
+		}
+
+		year = std::stoi(inDate.substr(8, 4));
+		savedYear = std::stoi(inDate.substr(6, 4));
+
+		if ((month == 1 || month == 2) && year % 4 == 0){
+			if (savedYear % 100 == 0){
+				if (savedYear % 400 == 0)
+					toAdd -= 2;
+			}
+			else
+				toAdd--;
+		}
+
+		q = year / 12;
+		r = year % 12;
+		if (year == 0)
+			r = 12;
+		s = r / 4;
+		toAdd += (q + r + s);
+		toAddCalc(savedYear, start);
+		toAdd += start - getMonth(month) + date;
+
+		std::cout << getMonthString(month) << " " << date << ", " << savedYear << " is a " << getDay(toAdd) << "\n";
+
+		toAdd = 0;
+		std::cout << "\n";
+
+	}
+}
+
+void toAddCalc(const int& year, int &start){
+	if ((year >= 1600 && year < 1700) || (year >= 2000 && year < 2100) || (year >= 2400 && year < 2500))
+		start = 3;
+	else if ((year >= 1700 && year < 1800) || (year >= 2100 && year < 2200) || (year >= 2500 && year < 2600))
+		start = 1;
+	else if ((year >= 1800 && year < 1900) || (year >= 2200 && year < 2300) || (year >= 2600 && year < 2700))
+		start = 6;
+	else if ((year >= 1900 && year < 2000) || (year >= 2300 && year < 2400) || (year >= 1500 && year < 1600))
+		start = 4;
+}
+
+int getMonth(const int& month){
+	if (month == 01)
+		return 3;
+	else if (month == 02)
+		return 0;
+	else if (month == 03)
+		return 0;
+	else if (month == 04)
+		return 4;
+	else if (month == 05)
+		return 2;
+	else if (month == 06)
+		return 6;
+	else if (month == 07)
+		return 4;
+	else if (month == 8)
+		return 1;
+	else if (month == 9)
+		return 5;
+	else if (month == 10)
+		return 3;
+	else if (month == 11)
+		return 0;
+	else if (month == 12)
+		return 5;
+}
+
+std::string getDay(const int& inAdd2){
+	if (inAdd2 % 7 == 1)
+		return "Sunday";
+	else if (inAdd2 % 7 == 2)
+		return "Monday";
+	else if (inAdd2 % 7 == 3)
+		return "Tuesday";
+	else if (inAdd2 % 7 == 4)
+		return "Wednesday";
+	else if (inAdd2 % 7 == 5)
+		return "Thursday";
+	else if (inAdd2 % 7 == 6)
+		return "Friday";
+	else if (inAdd2 % 7 == 0)
+		return "Saturday";
+}
+
+std::string getMonthString(const int& inAdd2){
+	if (inAdd2 == 1)
+		return "January";
+	else if (inAdd2 == 2)
+		return "February";
+	else if (inAdd2 == 3)
+		return "March";
+	else if (inAdd2 == 4)
+		return "April";
+	else if (inAdd2 == 5)
+		return "May";
+	else if (inAdd2 == 6)
+		return "June";
+	else if (inAdd2 == 7)
+		return "July";
+	else if (inAdd2 == 8)
+		return"August";
+	else if (inAdd2 == 9)
+		return "September";
+	else if (inAdd2 == 10)
+		return "October";
+	else if (inAdd2 == 11)
+		return "November";
+	else if (inAdd2 == 12)
+		return "December";
+}
