@@ -8,6 +8,10 @@ Ideally this should be executed with 256 petabytes of ram and download speed in 
 Alternatively just let it run for a week or two. If there is an interrupt, it will wait 60
 seconds and try again indefinitely. So if wikipedia blocks the request, it tries again a 
 minute later and if that request is also blocked then it tries again a minute later etc
+It's worth pointing out that as the cache of visited urls increases, the runtime 
+increases as well. So for example the first million are faster than the second million,
+and so on.
+
 Note: the java version does not work, I stopped in middle and switched to python because
 it has faster http requests and file writing. I timed both for the first 500 rounds and
 python was much quicker. If you try to run the java version, you first need to remove 
