@@ -1,0 +1,10 @@
+For the love of all that is good and holy, don't use this in any malicious way.
+If you have any conerns about wikipedia going down or the internet falling apart or 
+for whatever reason you want to have a local backup of wikipedia, just run this. 
+From the directory where you place the .py, it will make a new directory called "wikis",
+in that folder it will store the stripped down text of each article.
+To save time/space it only saves the core article, not the references and other info.
+This should ideally be executed with 256 petabytes of ram and download speed in the YBPS
+Alternatively just let it run for a week or two. If there is an interrupt, it will wait 60
+seconds and try again indefinitely. So if wikipedia blocks the request, it tries again a 
+minute later and if that request is also blocked then it tries again a minute later etc
