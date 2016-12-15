@@ -86,8 +86,7 @@ def getSource(source, urls, whatAreWeUpTo):
         loc = url.lower()
          
         if not loc in urls and not url in urls and "/wiki/" in loc and not "-footnote" in loc and not "org/ttps" in loc and not "file:" in loc and not "#" in loc and not ":" in url[30:].lower():
-            asdf = len(urls) - 1
-            urls.insert(asdf, url)
+            urls.insert(len(urls) - 1, url)
 	    
     return x
 
