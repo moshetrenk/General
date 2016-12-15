@@ -16,12 +16,7 @@ Note: the java version does not work, I stopped in middle and switched to python
 it has faster http requests and file writing. I timed both for the first 500 rounds and
 python was much quicker. If you try to run the java version, you first need to remove 
 forbidden symbols from the file name, something like this
-    title = title.replace("\"", "")
-    title = title.replace("\\", "")
-    title = title.replace("|", "")
-    title = title.replace("/", "")
-    title = title.replace("*", "")
-    title = title.replace("?", "")
+    title = title.replace("\"", "").replace("\\", "").replace("|", "").replace("/", "").replace("*", "").replace("?", "")
 
 PS this was made with python 2.7 because I can't use 3+ for different projects I'm working on
 Also I'm not too sure if this will work altogether if you're not on a windows machine
