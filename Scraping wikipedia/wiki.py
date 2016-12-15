@@ -34,19 +34,13 @@ def stripSource(source):
         if(istag == False):
            s += source[i]
 
-    s = s.replace("<", " ")
-    s = s.replace(">", " ") 
+    s = s.replace("<", " ").s.replace(">", " ") 
     return s
 
 def saveContent(stringToSave, title, whatAreWeUpTo):
     title = title[0: len(title) - 12]
     #print(title, end = "")
-    title = title.replace("\"", "")
-    title = title.replace("\\", "")
-    title = title.replace("|", "")
-    title = title.replace("/", "")
-    title = title.replace("*", "")
-    title = title.replace("?", "")
+    title = title.replace("\"", "").replace("\\", "").replace("|", "").replace("/", "").replace("*", "").replace("?", "")
 
     f = open(sysLoc + "\\" + title + ".txt", "w")
     f.write(title + "\n" + stringToSave)
