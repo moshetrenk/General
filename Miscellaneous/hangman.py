@@ -1,3 +1,8 @@
+"""
+This file is here becuase in CSC 330 - Object Oriented Software Design, this    
+file merited my professor's statement that I "mastered the art of python"
+"""
+
 import fileinput
 import random
 #input file contains every word in the language of your choice (line separated)
