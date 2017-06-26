@@ -1,15 +1,18 @@
-/* This is pretty cool... you know how on windows when you search the entire system
-for a file, the search can take like a week because nothing is indexed? So if you
-run this, it gives you a csv (excel) file with a complete listing of every file on
-your system so if you find you're doing searches often, you can just run this and 
-get whatever info you need and then navigate to the file you want. Also it shows
-file size, most recent modification, if it's an executable and much more
-
-
-TL;DR Makes a directory of all files (windows)
-
+/*     
+* TL;DR Makes a directory of all files (windows)    
+* 
+* This is pretty cool... you know how on windows when you search the entire system
+* for a file, the search can take like a week because nothing is indexed? So if you
+* run this, it gives you a csv (excel) file with a complete listing of every file on
+* your system so if you find you're doing searches often, you can just run this and 
+* get whatever info you need and then navigate to the file you want. Also it shows
+* file size, most recent modification, if it's an executable and much more    
+*     
+* output() takes the files in the C folder and if a file is a directory then the         
+* it gets passed to output(), otherwise its data is sent to the csv file. This little        
+* recursive method pretty much does the whole thing.      
 */
-package a;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
