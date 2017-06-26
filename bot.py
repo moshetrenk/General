@@ -1,7 +1,7 @@
 """
-This bot checks for new posts in r/sudoku every 2 hours and emails the
-title and the link to you. Unlike PHP, you have to actually log in with    
-an email address...    
+This bot checks for new posts in a subreddit every 2 hours and emails the
+title and the link to you. Unlike PHP's mail function, you have to actually     
+log in with a valid email address...    
 If you run this with gmail (you should), you need to turn on pop/imap
 and turn off blocked access under lesssecureappssecurity
 """
@@ -11,8 +11,9 @@ import time
 import smtplib
 import datetime
 
-r = praw.Reddit(user_agent = "I want notifications for new posts to r/sudoku - [your reddit username here]")
-subreddit = r.get_subreddit("sudoku")
+subredditName = "insert a subreddit here" #example: "sudoku"
+r = praw.Reddit(user_agent = "I want notifications for new posts to r/subredditName - [your reddit username here]")
+subreddit = r.get_subreddit(subredditName)
 
 cache = []
 
